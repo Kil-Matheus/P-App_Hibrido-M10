@@ -37,7 +37,7 @@ def register():
 
     try:
         cur = conn.cursor()
-        cur.execute('INSERT INTO users (email, password) VALUES (%s, %s)', (email, password))
+        cur.execute('INSERT INTO users (email, senha) VALUES (%s, %s)', (email, password))
         conn.commit()
         cur.close()
 
