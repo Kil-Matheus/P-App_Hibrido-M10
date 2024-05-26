@@ -1,50 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'cadastrar.dart';
-import 'package:app_hibrido/camera.dart';
 
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
+class CadastrarPage extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Login App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: LoginPage(),
-    );
-  }
+  _CadastrarPageState createState() => _CadastrarPageState();
 }
 
-class LoginPage extends StatefulWidget {
-  @override
-  _LoginPageState createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> {
+class _CadastrarPageState extends State<CadastrarPage> {
   final _formKey = GlobalKey<FormState>();
-  final _usernameController = TextEditingController();
+  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   String _message = '';
 
-  Future<void> _login() async {
+  Future<void> _register() async {
     if (_formKey.currentState!.validate()) {
-      String username = _usernameController.text;
+      String email = _emailController.text;
       String password = _passwordController.text;
 
       try {
         final response = await http.post(
-          Uri.parse('http://172.17.0.1:8000/login'),  // IP do host - Máquina - Nginx
-          //Uri.parse('http://172.18.0.5:8000/login'),  // IP do host - Endereço de Rede (Fica trocando)- Nginx
-          //Uri.parse('http://172.18.0.4:5000/login'), // IP do host - Endereço de Rede - Flutter Simulado
-          //Uri.parse('http://172.17.0.1:5000/login'), //Ip do host - Máquina - Docker Compose s/ Nginx - 5000 Flask
+          Uri.parse('http://172.17.0.1:8000/register'), 
           headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({'email': username, 'password': password}),
+          body: jsonEncode({'email': email, 'password': password}),
         );
 
         if (response.statusCode == 200) {
@@ -69,7 +47,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
+        title: Text('Cadastrar'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -79,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               TextFormField(
-                controller: _usernameController,
+                controller: _emailController,
                 decoration: InputDecoration(labelText: 'Email'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -101,34 +79,13 @@ class _LoginPageState extends State<LoginPage> {
               ),
               SizedBox(height: 20),
               ElevatedButton(
-                onPressed: _login,
-                child: Text('Login'),
+                onPressed: _register,
+                child: Text('Cadastrar'),
               ),
               SizedBox(height: 20),
               Text(
                 _message,
                 style: TextStyle(color: Colors.red),
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => CadastrarPage()),
-                  );
-                },
-                child: Text('Cadastrar'),
-              ),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => FilteredImagePage()),
-                    );
-                  },
-                  child: Text('Camera'),
-                ),
               ),
             ],
           ),
@@ -139,7 +96,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void dispose() {
-    _usernameController.dispose();
+    _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
   }

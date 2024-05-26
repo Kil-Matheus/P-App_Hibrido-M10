@@ -1,0 +1,46 @@
+version: '3.1'
+
+services:
+  db:
+    build:
+      context: ./backend_auth/db
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+
+  backend_auth:
+    build:
+      context: ./backend_auth/app
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+
+  filtro_app:
+    build:
+      context: ./backend_auth/filtro
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "5001:5001"
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+ 
+  gateway:
+    build: ./gateway
+    restart: always
+    ports:
+      - "8000:80"
