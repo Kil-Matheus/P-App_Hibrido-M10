@@ -44,3 +44,6 @@ services:
     restart: always
     ports:
       - "8000:80"
+    depends_on:
+      - backend_auth
+      - filtro_app
