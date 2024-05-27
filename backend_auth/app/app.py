@@ -1,6 +1,9 @@
 from flask import Flask, jsonify, request
 import psycopg2
+import logging
 
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 app = Flask(__name__)
 
 conn = psycopg2.connect(
@@ -12,6 +15,7 @@ conn = psycopg2.connect(
 
 @app.route('/login', methods=['POST'])
 def login():
+    logger.info('Login request received')
     data = request.get_json()
     email = data['email']
     password = data['password']
@@ -31,6 +35,7 @@ def login():
 
 @app.route('/register', methods=['POST'])
 def register():
+    logger.info('Register request received')
     data = request.get_json()
     email = data['email']
     password = data['password']
@@ -40,6 +45,7 @@ def register():
         cur.execute('INSERT INTO users (email, senha) VALUES (%s, %s)', (email, password))
         conn.commit()
         cur.close()
+        logger.info('User created successfully')
 
         return jsonify({'message': 'User created successfully'})
     except Exception as e:
@@ -49,6 +55,7 @@ def register():
 @app.route('/users', methods=['GET'])
 def users():
     try:
+        logger.info('Users request received')
         cur = conn.cursor()
         cur.execute('SELECT * FROM users')
         users = cur.fetchall()

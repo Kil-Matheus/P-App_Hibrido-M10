@@ -1,11 +1,16 @@
 from flask import Flask, request, send_file, jsonify
 from PIL import Image, ImageFilter
 import io
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
 @app.route('/upload', methods=['POST'])
 def upload_image():
+    logger.info('Upload request received')
     if 'image' not in request.files:
         return jsonify({'error': 'No image part'}), 400
 
@@ -15,6 +20,7 @@ def upload_image():
         return jsonify({'error': 'No selected file'}), 400
 
     if file:
+        logger.info('Image received: %s', file.filename)
         # Abrir a imagem com Pillow
         image = Image.open(file)
 
@@ -29,6 +35,8 @@ def upload_image():
         img_io = io.BytesIO()
         filtered_image.save(img_io, 'JPEG')
         img_io.seek(0)
+
+        logger.info('Image processed successfully')
 
         # Retornar a imagem como resposta HTTP
         return send_file(img_io, mimetype='image/jpeg')
