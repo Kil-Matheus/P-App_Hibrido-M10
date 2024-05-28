@@ -30,6 +30,7 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+  // final _serverUri = TextEditingController();
   String _message = '';
 
   Future<void> _login() async {
@@ -37,16 +38,19 @@ class _LoginPageState extends State<LoginPage> {
       String username = _usernameController.text;
       String password = _passwordController.text;
 
+      
+
       try {
         final response = await http.post(
+          //Uri.parse('http://172.20.10.7:8000/login'), // IP do host - Máquina WLAN - Nginx
+          //Uri.parse('http://${_serverUri.text}'), // IP do host - Máquina WLAN - Nginx
           Uri.parse('http://172.17.0.1:8000/login'),  // IP do host - Máquina - Nginx
           //Uri.parse('http://172.18.0.5:8000/login'),  // IP do host - Endereço de Rede (Fica trocando)- Nginx
           //Uri.parse('http://172.18.0.4:5000/login'), // IP do host - Endereço de Rede - Flutter Simulado
           //Uri.parse('http://172.17.0.1:5000/login'), //Ip do host - Máquina - Docker Compose s/ Nginx - 5000 Flask
           headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({'email': username, 'password': password}),
+          body: jsonEncode(<String,String>{'email': username, 'password': password}),
         );
-
         if (response.statusCode == 200) {
           final responseData = jsonDecode(response.body);
           setState(() {
@@ -129,6 +133,11 @@ class _LoginPageState extends State<LoginPage> {
                   },
                   child: Text('Camera'),
                 ),
+              // ),
+              // TextField(
+              //   controller: _serverUri,
+              //   decoration: InputDecoration(labelText: 'URI do Servidor'),
+              
               ),
             ],
           ),
