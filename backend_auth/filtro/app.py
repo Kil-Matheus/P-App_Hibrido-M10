@@ -1,5 +1,5 @@
 from flask import Flask, request, send_file, jsonify
-from PIL import Image, ImageFilter
+from PIL import Image, ImageFilter, ImageEnhance
 import psycopg2
 import io
 import logging
@@ -51,8 +51,8 @@ def upload_image():
         # Abrir a imagem com Pillow
         image = Image.open(file)
 
-        # Aplicar um filtro (exemplo: BLUR)
-        filtered_image = image.filter(ImageFilter.BLUR)
+        enhancer = ImageEnhance.Color(image)
+        filtered_image = enhancer.enhance(9.5)
 
         # Converter para modo RGB se a imagem estiver em RGBA
         if filtered_image.mode == 'RGBA':

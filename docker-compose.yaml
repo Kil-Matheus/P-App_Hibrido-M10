@@ -30,6 +30,8 @@ services:
     restart: always
     ports:
       - "5001:5001"
+    depends_on:
+      - db
 
   log:
     build:
@@ -38,6 +40,8 @@ services:
     restart: always
     ports:
       - "5002:5002"
+    depends_on:
+      - db
 
   adminer:
     image: adminer

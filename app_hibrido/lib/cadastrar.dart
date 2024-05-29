@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'services/notification.dart';
 
 class CadastrarPage extends StatefulWidget {
   @override
@@ -20,7 +21,8 @@ class _CadastrarPageState extends State<CadastrarPage> {
 
       try {
         final response = await http.post(
-          Uri.parse('http://172.17.0.1:8000/register'), 
+          //Uri.parse('http://172.17.0.1:8000/register'), 
+          Uri.parse('http://172.20.10.7:8000/register'), 
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode({'email': email, 'password': password}),
         );
@@ -29,6 +31,7 @@ class _CadastrarPageState extends State<CadastrarPage> {
           final responseData = jsonDecode(response.body);
           setState(() {
             _message = responseData['message'];
+            NotificationService.showNotification('Cadastro', 'O $email foi cadastrado com sucesso');
           });
         } else {
           setState(() {

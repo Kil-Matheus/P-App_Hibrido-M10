@@ -34,8 +34,8 @@ class _FilteredImagePageState extends State<FilteredImagePage> {
 
   Future<void> _uploadImage(File image) async {
     //final uri = Uri.parse('http://172.17.0.1:5001/upload');  // Host IP - Máquina - Docker Compose s/ Nginx
-    //final uri = Uri.parse('http://172.20.10.7:8000/upload'); // Host IP - Máquina WLAN - Nginx
-    final uri = Uri.parse('http://172.17.0.1:8000/upload'); // Host IP - Máquina - Nginx
+    final uri = Uri.parse('http://172.20.10.7:8000/upload'); // Host IP - Máquina WLAN - Nginx
+    //final uri = Uri.parse('http://172.17.0.1:8000/upload'); // Host IP - Máquina - Nginx
     final request = http.MultipartRequest('POST', uri)
       ..files.add(await http.MultipartFile.fromPath('image', image.path))
       ..fields['filter'] = 'BLUR';

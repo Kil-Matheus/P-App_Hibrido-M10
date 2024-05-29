@@ -3,12 +3,29 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'cadastrar.dart';
 import 'package:app_hibrido/camera.dart';
+import 'package:app_hibrido/services/notification.dart';
 
 void main() {
+  NotificationService.init();
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+
+  @override
+  void initState() {
+    NotificationService.allowed();
+    super.initState();
+  }
+    
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -42,9 +59,9 @@ class _LoginPageState extends State<LoginPage> {
 
       try {
         final response = await http.post(
-          //Uri.parse('http://172.20.10.7:8000/login'), // IP do host - Máquina WLAN - Nginx
+          Uri.parse('http://172.20.10.7:8000/login'), // IP do host - Máquina WLAN - Nginx
           //Uri.parse('http://${_serverUri.text}'), // IP do host - Máquina WLAN - Nginx
-          Uri.parse('http://172.17.0.1:8000/login'),  // IP do host - Máquina - Nginx
+          //Uri.parse('http://172.17.0.1:8000/login'),  // IP do host - Máquina - Nginx
           //Uri.parse('http://172.18.0.5:8000/login'),  // IP do host - Endereço de Rede (Fica trocando)- Nginx
           //Uri.parse('http://172.18.0.4:5000/login'), // IP do host - Endereço de Rede - Flutter Simulado
           //Uri.parse('http://172.17.0.1:5000/login'), //Ip do host - Máquina - Docker Compose s/ Nginx - 5000 Flask
@@ -55,6 +72,7 @@ class _LoginPageState extends State<LoginPage> {
           final responseData = jsonDecode(response.body);
           setState(() {
             _message = responseData['message'];
+            NotificationService.showNotification('Login', 'Bem vindo $username');
           });
         } else {
           setState(() {
