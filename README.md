@@ -19,3 +19,5 @@ docker compose up
 # Vídeo de funcionamento
 
 link: https://drive.google.com/file/d/1lxxZz63K1e4Z-vPQlBwido5bUWQrInCS/view?usp=sharing
+
+link atualizado: https://drive.google.com/file/d/15ASaio2WSBTOHtmtxNdcQ_W-x9JQsweH/view?usp=drivesdk
