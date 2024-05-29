@@ -1,48 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'services/notification.dart';
+import 'package:app_hibrido/controllers/login_controller.dart';
+import 'package:app_hibrido/models/user_model.dart';
+import 'package:app_hibrido/views/register_page.dart';
+import 'package:app_hibrido/views/camera_page.dart';
 
-class CadastrarPage extends StatefulWidget {
+class LoginPage extends StatefulWidget {
   @override
-  _CadastrarPageState createState() => _CadastrarPageState();
+  _LoginPageState createState() => _LoginPageState();
 }
 
-class _CadastrarPageState extends State<CadastrarPage> {
+class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
+  final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   String _message = '';
+  final LoginController _loginController = LoginController();
 
-  Future<void> _register() async {
+  Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
-      String email = _emailController.text;
-      String password = _passwordController.text;
-
-      try {
-        final response = await http.post(
-          //Uri.parse('http://172.17.0.1:8000/register'), 
-          Uri.parse('http://172.20.10.7:8000/register'), 
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({'email': email, 'password': password}),
-        );
-
-        if (response.statusCode == 200) {
-          final responseData = jsonDecode(response.body);
-          setState(() {
-            _message = responseData['message'];
-            NotificationService.showNotification('Cadastro', 'O $email foi cadastrado com sucesso');
-          });
-        } else {
-          setState(() {
-            _message = 'Erro de servidor: ${response.statusCode}';
-          });
-        }
-      } catch (e) {
-        setState(() {
-          _message = 'Erro de rede: $e';
-        });
-      }
+      UserModel user = UserModel(_usernameController.text, _passwordController.text);
+      String message = await _loginController.login(user);
+      setState(() {
+        _message = message;
+      });
     }
   }
 
@@ -50,7 +30,7 @@ class _CadastrarPageState extends State<CadastrarPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Cadastrar'),
+        title: Text('Login'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -60,7 +40,7 @@ class _CadastrarPageState extends State<CadastrarPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               TextFormField(
-                controller: _emailController,
+                controller: _usernameController,
                 decoration: InputDecoration(labelText: 'Email'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -82,13 +62,34 @@ class _CadastrarPageState extends State<CadastrarPage> {
               ),
               SizedBox(height: 20),
               ElevatedButton(
-                onPressed: _register,
-                child: Text('Cadastrar'),
+                onPressed: _login,
+                child: Text('Login'),
               ),
               SizedBox(height: 20),
               Text(
                 _message,
                 style: TextStyle(color: Colors.red),
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => RegisterPage()),
+                  );
+                },
+                child: Text('Cadastrar'),
+              ),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => CameraPage()),
+                    );
+                  },
+                  child: Text('Camera'),
+                ),
               ),
             ],
           ),
@@ -99,7 +100,7 @@ class _CadastrarPageState extends State<CadastrarPage> {
 
   @override
   void dispose() {
-    _emailController.dispose();
+    _usernameController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
